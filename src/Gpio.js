@@ -3,130 +3,136 @@
 const log = require("./log");
 
 class Gpio {
-	constructor(pin, options) {
-		this.gpio = pin;
-		options = options || {};
+    constructor(pin, options) {
+        this.gpio = pin;
+        options = options || {};
 
-		this.digitalValue = 0;
-		this.pwmValue = 0;
-		this.frequency = 31;
-		this.pwmRange = 0;
+        this.digitalValue = 0;
+        this.pwmValue = 0;
+        this.frequency = 31;
+        this.pwmRange = 0;
 
-		log(`[GPIO ${this.gpio} / constructor] Initializing...`);
+        this.interruptFn = {};
 
-		if (typeof options.mode === "number") {
-			this.mode = options.mode;
-			log(`[GPIO ${this.gpio} / constructor] Setting mode = ${options.mode}`);
-		}
+        log(`[GPIO ${this.gpio} / constructor] Initializing...`);
 
-		if (typeof options.pullUpDown === "number") {
-			this.pullUpDown = options.pullUpDown;
-			log(`[GPIO ${this.gpio} / constructor] Setting pullUpDown = ${options.pullUpDown}`);
-		}
+        if (typeof options.mode === "number") {
+            this.mode = options.mode;
+            log(`[GPIO ${this.gpio} / constructor] Setting mode = ${options.mode}`);
+        }
 
-		if (typeof options.edge === "number") {
-			this.edge = options.edge;
-			log(`[GPIO ${this.gpio} / constructor] Setting edge = ${options.edge}`);
-		}
+        if (typeof options.pullUpDown === "number") {
+            this.pullUpDown = options.pullUpDown;
+            log(`[GPIO ${this.gpio} / constructor] Setting pullUpDown = ${options.pullUpDown}`);
+        }
 
-		if (typeof options.alert === "boolean" && options.alert) {
-			this.alert = options.alert;
-			log(`[GPIO ${this.gpio} / constructor] Setting alert = ${options.alert}`);
-		}
-	}
+        if (typeof options.edge === "number") {
+            this.edge = options.edge;
+            log(`[GPIO ${this.gpio} / constructor] Setting edge = ${options.edge}`);
+        }
 
-	mode(mode) {
-		log(`[GPIO ${this.gpio} / mode] Setting mode = ${mode}`);
-		this.mode = mode;
-		return this;
-	}
+        if (typeof options.alert === "boolean" && options.alert) {
+            this.alert = options.alert;
+            log(`[GPIO ${this.gpio} / constructor] Setting alert = ${options.alert}`);
+        }
+    }
 
-	getMode() {
-		log(`[GPIO ${this.gpio} / getMode] Getting mode = ${this.mode}`);
-		return this.mode;
-	}
+    mode(mode) {
+        log(`[GPIO ${this.gpio} / mode] Setting mode = ${mode}`);
+        this.mode = mode;
+        return this;
+    }
 
-	pullUpDown(pud) {
-		log(`[GPIO ${this.gpio} / pullUpDown] Setting pullUpDown = ${pud}`);
-		this.pullUpDown = pud;
-		return this;
-	}
+    getMode() {
+        log(`[GPIO ${this.gpio} / getMode] Getting mode = ${this.mode}`);
+        return this.mode;
+    }
 
-	digitalRead() {
-		log(`[GPIO ${this.gpio} / digitalRead] Getting digitalValue = ${this.digitalValue}`);
-		return this.digitalValue;
-	}
+    pullUpDown(pud) {
+        log(`[GPIO ${this.gpio} / pullUpDown] Setting pullUpDown = ${pud}`);
+        this.pullUpDown = pud;
+        return this;
+    }
 
-	digitalWrite(level) {
-		log(`[GPIO ${this.gpio} / digitalWrite] Setting value = ${level}`);
-		this.digitalValue = level;
-		return this;
-	}
+    digitalRead() {
+        log(`[GPIO ${this.gpio} / digitalRead] Getting digitalValue = ${this.digitalValue}`);
+        return this.digitalValue;
+    }
 
-	trigger(pulseLen, level) {
-		log("`[GPIO ${this.gpio} / trigger] Triggering, pulseLen: ${pulseLen}, level: ${level}");
-		return this;
-	}
+    digitalWrite(level) {
+        log(`[GPIO ${this.gpio} / digitalWrite] Setting value = ${level}`);
+        this.digitalValue = level;
+        return this;
+    }
 
-	pwmWrite(dutyCycle) {
-		log(`[GPIO ${this.gpio} / pwmWrite-analogWrite] Setting dutyCycle = ${dutyCycle}`);
-		this.pwmValue = dutyCycle;
-		return this;
-	}
+    trigger(pulseLen, level) {
+        log("`[GPIO ${this.gpio} / trigger] Triggering, pulseLen: ${pulseLen}, level: ${level}");
+        return this;
+    }
 
-	//analogWrite = pwmWrite;
+    pwmWrite(dutyCycle) {
+        log(`[GPIO ${this.gpio} / pwmWrite-analogWrite] Setting dutyCycle = ${dutyCycle}`);
+        this.pwmValue = dutyCycle;
+        return this;
+    }
 
-	hardwarePwmWrite(frequency, dutyCycle) {
-		log(
-			`[GPIO ${this
+    //analogWrite = pwmWrite;
+
+    hardwarePwmWrite(frequency, dutyCycle) {
+        log(
+            `[GPIO ${this
 				.gpio} / hardwarePwmWrite] Setting dutyCycle = ${dutyCycle}, frequency = ${frequency}`
-		);
-		this.pwmValue = dutyCycle;
-		this.frequency = frequency;
-		return this;
-	}
+        );
+        this.pwmValue = dutyCycle;
+        this.frequency = frequency;
+        return this;
+    }
 
-	getPwmDutyCycle() {
-		log(`[GPIO ${this.gpio} / getPwmDutyCycle] Getting dutyCycle = ${this.pwmValue}`);
-		return this.pwmValue;
-	}
+    getPwmDutyCycle() {
+        log(`[GPIO ${this.gpio} / getPwmDutyCycle] Getting dutyCycle = ${this.pwmValue}`);
+        return this.pwmValue;
+    }
 
-	pwmRange(range) {
-		log(`[GPIO ${this.gpio} / pwmRange] Setting pwmRange = ${range}`);
-		this.pwmRange = range;
-		return this;
-	}
+    pwmRange(range) {
+        log(`[GPIO ${this.gpio} / pwmRange] Setting pwmRange = ${range}`);
+        this.pwmRange = range;
+        return this;
+    }
 
-	getPwmRange() {
-		log(`[GPIO ${this.gpio} / getPwmRange] Getting pwmRange = ${this.pwmRange}`);
-		return this.pwmRange;
-	}
+    getPwmRange() {
+        log(`[GPIO ${this.gpio} / getPwmRange] Getting pwmRange = ${this.pwmRange}`);
+        return this.pwmRange;
+    }
 
-	getPwmRealRange() {
-		log(`[GPIO ${this.gpio} / getRealPwmRange] Getting pwmRange = ${this.pwmRange}`);
-		return this;
-	}
+    getPwmRealRange() {
+        log(`[GPIO ${this.gpio} / getRealPwmRange] Getting pwmRange = ${this.pwmRange}`);
+        return this;
+    }
 
-	pwmFrequency(frequency) {
-		log(`[GPIO ${this.gpio} / pwmFrequency] Setting frequency = ${this.frequency}`);
-		this.frequency = frequency;
-		return this;
-	}
+    pwmFrequency(frequency) {
+        log(`[GPIO ${this.gpio} / pwmFrequency] Setting frequency = ${this.frequency}`);
+        this.frequency = frequency;
+        return this;
+    }
 
-	getPwmFrequency() {
-		log(`[GPIO ${this.gpio} / getPwmFrequency] Getting frequency = ${this.frequency}`);
-		return this.frequency;
-	}
+    getPwmFrequency() {
+        log(`[GPIO ${this.gpio} / getPwmFrequency] Getting frequency = ${this.frequency}`);
+        return this.frequency;
+    }
 
-	servoWrite(pulseWidth) {
-		log(`[GPIO ${this.gpio} / servoWrite] METHOD NOT IMPLEMENTED`);
-		return this;
-	}
+    servoWrite(pulseWidth) {
+        log(`[GPIO ${this.gpio} / servoWrite] METHOD NOT IMPLEMENTED`);
+        return this;
+    }
 
-	getServoPulseWidth() {
-		log(`[GPIO ${this.gpio} / getServoPulseWidth] METHOD NOT IMPLEMENTED`);
-		return null;
-	}
+    getServoPulseWidth() {
+        log(`[GPIO ${this.gpio} / getServoPulseWidth] METHOD NOT IMPLEMENTED`);
+        return null;
+    }
+
+    on(event, fn) {
+        this.interruptFn = fn;
+    }
 }
 
 Gpio.INPUT = 0; // PI_INPUT
