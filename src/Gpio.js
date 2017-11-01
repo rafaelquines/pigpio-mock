@@ -67,7 +67,7 @@ class Gpio {
     }
 
     callOnInterrupt() {
-        if (this.interruptFn) {
+        if (typeof this.interruptFn === 'function') {
             this.interruptFn(this.digitalValue);
         }
     }
