@@ -62,7 +62,14 @@ class Gpio {
     digitalWrite(level) {
         log(`[GPIO ${this.gpio} / digitalWrite] Setting value = ${level}`);
         this.digitalValue = level;
+        this.callOnInterrupt();
         return this;
+    }
+
+    callOnInterrupt() {
+        if (this.interruptFn) {
+            this.interruptFn(this.digitalValue);
+        }
     }
 
     trigger(pulseLen, level) {
