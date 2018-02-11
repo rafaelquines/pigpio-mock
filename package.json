@@ -1,5 +1,5 @@
 {
-    "name": "pigpio-mock",
+    "name": "@rafaelquines/pigpio-mock",
     "version": "0.0.2",
     "description": "Package used to mock Pigpio for local development",
     "main": "src/index.js",
